@@ -1,9 +1,20 @@
+from abc import ABCMeta 
 import types
 
-class CliWrapper:
+class Wrapper(metaclass=ABCMeta):
     def __init__(self, cls):
         self._instance = cls()
 
+    @staticmethod
+    def _get_set_for_property(name):
+        """
+        Generate a get/set function for property with given name.
+        :param name: Name of the property the get/set-function should act on.
+        :returns: Function that gets/sets property with name `name` in `self._instance`
+        """
+
+class CliWrapper(Wrapper):
+    """Make properties available in a fire-cli-friendly way."""
     @staticmethod
     def _get_set_for_property(name):
         """
