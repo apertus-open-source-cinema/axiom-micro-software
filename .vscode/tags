@@ -1,0 +1,147 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	Development	//
+a	../dma_verify.py	/^a = np.fromfile('dump.ram', dtype='<u4')$/;"	kind:variable	line:4
+address	../analog_gain.py	/^address = 0x10$/;"	kind:variable	line:10
+address	../control.py	/^address = 16$/;"	kind:variable	line:12
+address	../digital_gain.py	/^address = 0x10$/;"	kind:variable	line:10
+address	../setup.py	/^address = 0x10$/;"	kind:variable	line:12
+address	../train_setup.py	/^address = 0x10$/;"	kind:variable	line:12
+address	../write_array.py	/^address = 0x18$/;"	kind:variable	line:7
+analog_gain.py	../analog_gain.py	1;"	kind:file	line:1
+ar0330	../analog_gain.py	/^ar0330 = load(open("ar0330.yml"))$/;"	kind:variable	line:13
+ar0330	../control.py	/^ar0330 = load(open("ar0330.yml"))$/;"	kind:variable	line:7
+ar0330	../digital_gain.py	/^ar0330 = load(open("ar0330.yml"))$/;"	kind:variable	line:13
+ar0330	../setup.py	/^ar0330 = load(open("ar0330.yml"))$/;"	kind:variable	line:7
+ar0330	../train_setup.py	/^ar0330 = load(open("ar0330.yml"))$/;"	kind:variable	line:7
+ar0330_gpio_addr	../analog_gain.py	/^ar0330_gpio_addr = 0x41200000$/;"	kind:variable	line:11
+ar0330_gpio_addr	../control.py	/^ar0330_gpio_addr = 0x41200000$/;"	kind:variable	line:13
+ar0330_gpio_addr	../digital_gain.py	/^ar0330_gpio_addr = 0x41200000$/;"	kind:variable	line:11
+ar0330_gpio_addr	../setup.py	/^ar0330_gpio_addr = 0x41200000$/;"	kind:variable	line:13
+ar0330_gpio_addr	../train_setup.py	/^ar0330_gpio_addr = 0x41200000$/;"	kind:variable	line:13
+ar0330_gpio_addr	../write_array.py	/^ar0330_gpio_addr = 0x41200000$/;"	kind:variable	line:8
+argv	../analog_gain.py	/^from sys import argv$/;"	kind:namespace	line:3
+argv	../digital_gain.py	/^from sys import argv$/;"	kind:namespace	line:3
+argv	../write_array.py	/^from sys import argv$/;"	kind:namespace	line:4
+check_output	../analog_gain.py	/^from subprocess import check_output$/;"	kind:namespace	line:6
+check_output	../control.py	/^from subprocess import check_output$/;"	kind:namespace	line:2
+check_output	../digital_gain.py	/^from subprocess import check_output$/;"	kind:namespace	line:6
+check_output	../setup.py	/^from subprocess import check_output$/;"	kind:namespace	line:2
+check_output	../train_setup.py	/^from subprocess import check_output$/;"	kind:namespace	line:2
+check_output	../write_array.py	/^from subprocess import check_output$/;"	kind:namespace	line:2
+chip_version	../control.py	/^chip_version = read("chip_version")$/;"	kind:variable	line:85
+chip_version	../setup.py	/^chip_version = read("chip_version")$/;"	kind:variable	line:85
+chip_version	../train_setup.py	/^chip_version = read("chip_version")$/;"	kind:variable	line:85
+control.py	../control.py	1;"	kind:file	line:1
+corr	../lut.py	/^corr = defaultdict(lambda: [])$/;"	kind:variable	line:7
+defaultdict	../lut.py	/^from collections import defaultdict$/;"	kind:namespace	line:3
+diffs	../dma_verify.py	/^diffs = a[1:] - a[:-1]$/;"	kind:variable	line:6
+digital_gain.py	../digital_gain.py	1;"	kind:file	line:1
+dma_verify.py	../dma_verify.py	1;"	kind:file	line:1
+extclk	../analog_gain.py	/^extclk = 24000000$/;"	kind:variable	line:8
+extclk	../control.py	/^extclk = 24000000$/;"	kind:variable	line:10
+extclk	../digital_gain.py	/^extclk = 24000000$/;"	kind:variable	line:8
+extclk	../setup.py	/^extclk = 24000000$/;"	kind:variable	line:10
+extclk	../train_setup.py	/^extclk = 24000000$/;"	kind:variable	line:10
+f	../lut.py	/^f = open("lut_good")$/;"	kind:variable	line:5
+gain_settings	../analog_gain.py	/^gain_settings = [$/;"	kind:variable	line:15
+gcd	../pll.py	/^from fractions import gcd$/;"	kind:namespace	line:1
+get_close	../analog_gain.py	/^def get_close(desired):$/;"	kind:function	line:78
+get_close	../digital_gain.py	/^def get_close(desired):$/;"	kind:function	line:46
+gpio	../control.py	/^def gpio(addr, value=0xdeadbeef):$/;"	kind:function	line:15
+gpio	../setup.py	/^def gpio(addr, value=0xdeadbeef):$/;"	kind:function	line:15
+gpio	../train_setup.py	/^def gpio(addr, value=0xdeadbeef):$/;"	kind:function	line:15
+gpio	../write_array.py	/^def gpio(addr, value=0xdeadbeef):$/;"	kind:function	line:10
+height	../control.py	/^height = 1296$/;"	kind:variable	line:161
+height	../setup.py	/^height = 1296$/;"	kind:variable	line:163
+height	../train_setup.py	/^height = 1296$/;"	kind:variable	line:164
+i2c_bus	../analog_gain.py	/^i2c_bus = "1"$/;"	kind:variable	line:9
+i2c_bus	../control.py	/^i2c_bus = "1"$/;"	kind:variable	line:11
+i2c_bus	../digital_gain.py	/^i2c_bus = "1"$/;"	kind:variable	line:9
+i2c_bus	../setup.py	/^i2c_bus = "1"$/;"	kind:variable	line:11
+i2c_bus	../train_setup.py	/^i2c_bus = "1"$/;"	kind:variable	line:11
+i2c_bus	../write_array.py	/^i2c_bus = "0"$/;"	kind:variable	line:6
+i2ctransfer	../analog_gain.py	/^def i2ctransfer(cmd):$/;"	kind:function	line:63
+i2ctransfer	../control.py	/^def i2ctransfer(cmd):$/;"	kind:function	line:24
+i2ctransfer	../digital_gain.py	/^def i2ctransfer(cmd):$/;"	kind:function	line:31
+i2ctransfer	../setup.py	/^def i2ctransfer(cmd):$/;"	kind:function	line:24
+i2ctransfer	../train_setup.py	/^def i2ctransfer(cmd):$/;"	kind:function	line:24
+i2ctransfer	../write_array.py	/^def i2ctransfer(cmd):$/;"	kind:function	line:19
+lane0	../lut.py	/^    lane0 = words[1]$/;"	kind:variable	line:13
+lane1	../lut.py	/^    lane1 = words[2]$/;"	kind:variable	line:14
+lane2	../lut.py	/^    lane2 = words[3]$/;"	kind:variable	line:15
+lane3	../lut.py	/^    lane3 = words[4]$/;"	kind:variable	line:16
+load	../analog_gain.py	/^from yaml import load$/;"	kind:namespace	line:5
+load	../control.py	/^from yaml import load$/;"	kind:namespace	line:3
+load	../digital_gain.py	/^from yaml import load$/;"	kind:namespace	line:5
+load	../setup.py	/^from yaml import load$/;"	kind:namespace	line:3
+load	../train_setup.py	/^from yaml import load$/;"	kind:namespace	line:3
+lut.py	../lut.py	1;"	kind:file	line:1
+np	../dma_verify.py	/^import numpy as np$/;"	kind:namespace	line:1
+o	../lut.py	/^    o = words[0]$/;"	kind:variable	line:12
+op_pix_clk_div	../control.py	/^op_pix_clk_div = 12$/;"	kind:variable	line:108
+op_pix_clk_div	../setup.py	/^op_pix_clk_div = 12$/;"	kind:variable	line:108
+op_pix_clk_div	../train_setup.py	/^op_pix_clk_div = 12$/;"	kind:variable	line:109
+op_sys_clk_div	../control.py	/^op_sys_clk_div =  1$/;"	kind:variable	line:107
+op_sys_clk_div	../setup.py	/^op_sys_clk_div =  1$/;"	kind:variable	line:107
+op_sys_clk_div	../train_setup.py	/^op_sys_clk_div =  1$/;"	kind:variable	line:108
+optimal_pll_config	../analog_gain.py	/^from pll import optimal_pll_config$/;"	kind:namespace	line:4
+optimal_pll_config	../control.py	/^from pll import optimal_pll_config$/;"	kind:namespace	line:5
+optimal_pll_config	../digital_gain.py	/^from pll import optimal_pll_config$/;"	kind:namespace	line:4
+optimal_pll_config	../pll.py	/^def optimal_pll_config(extclk, vco_target):$/;"	kind:function	line:4
+optimal_pll_config	../setup.py	/^from pll import optimal_pll_config$/;"	kind:namespace	line:5
+optimal_pll_config	../train_setup.py	/^from pll import optimal_pll_config$/;"	kind:namespace	line:5
+orig	../lut.py	/^        orig = o[:]$/;"	kind:variable	line:24
+pll.py	../pll.py	1;"	kind:file	line:1
+pll_config	../control.py	/^pll_config = optimal_pll_config(extclk, vco_hispi_4lanes_12bit_clk)$/;"	kind:variable	line:100
+pll_config	../setup.py	/^pll_config = optimal_pll_config(extclk, vco_hispi_4lanes_12bit_clk)$/;"	kind:variable	line:100
+pll_config	../train_setup.py	/^pll_config = optimal_pll_config(extclk, vco_hispi_4lanes_12bit_clk)$/;"	kind:variable	line:101
+pll_multiplier	../control.py	/^pll_multiplier = pll_config["pll_multiplier"] $/;"	kind:variable	line:102
+pll_multiplier	../setup.py	/^pll_multiplier = pll_config["pll_multiplier"] $/;"	kind:variable	line:102
+pll_multiplier	../train_setup.py	/^pll_multiplier = pll_config["pll_multiplier"] $/;"	kind:variable	line:103
+pre_pll_clk_div	../control.py	/^pre_pll_clk_div = pll_config["pre_pll_clk_div"] $/;"	kind:variable	line:101
+pre_pll_clk_div	../setup.py	/^pre_pll_clk_div = pll_config["pre_pll_clk_div"] $/;"	kind:variable	line:101
+pre_pll_clk_div	../train_setup.py	/^pre_pll_clk_div = pll_config["pre_pll_clk_div"] $/;"	kind:variable	line:102
+read	../control.py	/^def read(register_name, cam = ar0330):$/;"	kind:function	line:40
+read	../setup.py	/^def read(register_name, cam = ar0330):$/;"	kind:function	line:40
+read	../train_setup.py	/^def read(register_name, cam = ar0330):$/;"	kind:function	line:40
+read	../write_array.py	/^def read(addr, count=2):$/;"	kind:function	line:33
+real	../lut.py	/^        real = lane0[:]$/;"	kind:variable	line:25
+setup.py	../setup.py	1;"	kind:file	line:1
+sleep	../control.py	/^from time import sleep$/;"	kind:namespace	line:4
+sleep	../setup.py	/^from time import sleep$/;"	kind:namespace	line:4
+sleep	../train_setup.py	/^from time import sleep$/;"	kind:namespace	line:4
+sleep	../write_array.py	/^from time import sleep$/;"	kind:namespace	line:3
+sleep_magic	../write_array.py	/^sleep_magic = 0xffff$/;"	kind:variable	line:65
+train_setup.py	../train_setup.py	1;"	kind:file	line:1
+vals	../write_array.py	/^vals = []$/;"	kind:variable	line:78
+vco_hispi_4lanes_12bit_clk	../control.py	/^vco_hispi_4lanes_12bit_clk = 588000000 # 588 MHz$/;"	kind:variable	line:98
+vco_hispi_4lanes_12bit_clk	../setup.py	/^vco_hispi_4lanes_12bit_clk = 588000000 # 588 MHz$/;"	kind:variable	line:98
+vco_hispi_4lanes_12bit_clk	../train_setup.py	/^vco_hispi_4lanes_12bit_clk = 588000000 # 588 MHz$/;"	kind:variable	line:98
+vt_pix_clk_div	../control.py	/^vt_pix_clk_div =  6$/;"	kind:variable	line:106
+vt_pix_clk_div	../setup.py	/^vt_pix_clk_div =  6$/;"	kind:variable	line:106
+vt_pix_clk_div	../train_setup.py	/^vt_pix_clk_div =  6$/;"	kind:variable	line:107
+vt_sys_clk_div	../control.py	/^vt_sys_clk_div =  1$/;"	kind:variable	line:105
+vt_sys_clk_div	../setup.py	/^vt_sys_clk_div =  1$/;"	kind:variable	line:105
+vt_sys_clk_div	../train_setup.py	/^vt_sys_clk_div =  1$/;"	kind:variable	line:106
+width	../control.py	/^width = 2304$/;"	kind:variable	line:160
+width	../setup.py	/^width = 2304$/;"	kind:variable	line:162
+width	../train_setup.py	/^width = 2304$/;"	kind:variable	line:163
+words	../lut.py	/^    words = line.split(' ')$/;"	kind:variable	line:10
+write	../analog_gain.py	/^def write(register_name, value, cam = ar0330):$/;"	kind:function	line:47
+write	../control.py	/^def write(register_name, value, cam = ar0330):$/;"	kind:function	line:49
+write	../digital_gain.py	/^def write(register_name, value, cam = ar0330):$/;"	kind:function	line:15
+write	../setup.py	/^def write(register_name, value, cam = ar0330):$/;"	kind:function	line:49
+write	../train_setup.py	/^def write(register_name, value, cam = ar0330):$/;"	kind:function	line:49
+write	../write_array.py	/^def write(addr, value, count=2):$/;"	kind:function	line:39
+write_array	../write_array.py	/^def write_array(vals):$/;"	kind:function	line:66
+write_array.py	../write_array.py	1;"	kind:file	line:1
+x_start	../control.py	/^x_start = 6$/;"	kind:variable	line:157
+x_start	../setup.py	/^x_start = 6$/;"	kind:variable	line:159
+x_start	../train_setup.py	/^x_start = 6$/;"	kind:variable	line:160
+y_start	../control.py	/^y_start = 6$/;"	kind:variable	line:158
+y_start	../setup.py	/^y_start = 6$/;"	kind:variable	line:160
+y_start	../train_setup.py	/^y_start = 6$/;"	kind:variable	line:161
