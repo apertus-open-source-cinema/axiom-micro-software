@@ -1,11 +1,14 @@
 from sensor_control.sensor import Sensor
 from sensor_control.i2c import I2c
+from sensor_control.gpio import GPIO
+from yaml import load
 
 
 class Ar0330(Sensor):
     def __init__(self):
         self.i2c = I2c("1")
-        self.register_map =
+        self.gpio = GPIO(0x41200000)
+        self.register_map = load(open("registers.yml"))
 
     def get_resolution(self):
         pass
