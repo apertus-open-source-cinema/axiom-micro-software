@@ -192,9 +192,6 @@ seq_data_port:
 seq_ctrl_port: 
     address: 0x3088
     width: 1
-x_odd_inc: 
-    address: 0x30a2
-    width: 1
 y_odd_inc: 
     address: 0x30a6
     width: 1
