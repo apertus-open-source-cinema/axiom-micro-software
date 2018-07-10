@@ -1,14 +1,20 @@
 from sensor_control.sensor import Sensor
 from sensor_control.i2c import I2c
 from sensor_control.gpio import GPIO
+from sensor_control.util import RelativeOpener
 from yaml import load
 
 
 class Ar0330(Sensor):
     def __init__(self):
+        # __file__ refers to the absolute path of this file
+        # This is needed because the builtin open() is relative to the current working directory
+        self._ro = RelativeOpener(__file__)
+        self.open = self._ro.open
+
         self.i2c = I2c("1")
         self.gpio = GPIO(0x41200000)
-        self.register_map = load(open("registers.yml"))
+        self.register_map = load(self.open("registers.yml"))
 
         # reset and initialize sensor
         self._reset()
