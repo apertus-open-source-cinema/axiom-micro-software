@@ -1,6 +1,7 @@
 from sensor_control.sensor import Sensor
 from sensor_control.i2c import I2c
 from sensor_control.gpio import GPIO
+from sensor_control.pll import optimal_pll_config
 from sensor_control.util import RelativeOpener
 from yaml import load
 
@@ -12,6 +13,7 @@ class Ar0330(Sensor):
         self._ro = RelativeOpener(__file__)
         self.open = self._ro.open
 
+        self.extclk = 24000000
         self.i2c = I2c("1")
         self.gpio = GPIO(0x41200000)
         self.register_map = load(self.open("registers.yml"))
@@ -81,8 +83,8 @@ class Ar0330(Sensor):
         sleep(.1)
 
         # magic init
-        _write("magic_init_config", 0xa114)
-        _write("magic_init_start", 0x0070)
+        self._write("magic_init_config", 0xa114)
+        self._write("magic_init_start", 0x0070)
         sleep(.1)
 
         # check chip_version
@@ -94,3 +96,33 @@ class Ar0330(Sensor):
         self._reversed_chiprev = _read("reversed_chiprev")
         self._version = _read("test_data_red")
 
+        # pll config for 12bit, 4 lane hispi
+        vco_hispi_4lanes_12bit_clk = 588000000 # 588 MHz
+        pll_config = optimal_pll_config(self.extclk, vco_hispi_4lanes_12bit_clk)
+        pre_pll_clk_div = pll_config["pre_pll_clk_div"] 
+        pll_multiplier = pll_config["pll_multiplier"] 
+
+        # taken from table in datasheet, no idea how to calculate on our own
+        vt_sys_clk_div =  1
+        vt_pix_clk_div =  6
+        op_sys_clk_div =  1
+        op_pix_clk_div = 12
+
+        self._write("vt_pix_clk_div", vt_pix_clk_div)
+        self._write("vt_sys_clk_div", vt_sys_clk_div)
+        self._write("pre_pll_clk_div", pre_pll_clk_div)
+        self._write("pll_multiplier", pll_multiplier)
+        self._write("op_pix_clk_div", op_pix_clk_div)
+        self._write("op_sys_clk_div", op_sys_clk_div)
+
+        # pll lock time
+        sleep(.1)
+
+        # data format setting
+        ## 0xc0c - 12bit raw uncompressed
+        self._write("data_format_bits", 0x0c0c)
+        # serial output format
+        ## select hivcm (1V8)
+        self._write("datapath_select", 1 << 9);
+        ## lol ????
+        self._write("mipi_config_status", 0xc00d);
