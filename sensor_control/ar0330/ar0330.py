@@ -25,10 +25,25 @@ class Ar0330(Sensor):
         self._reset()
 
     def get_resolution(self):
-        pass
+        # this is the maximum in video mode
+        # still mode supports a higher ymax
+        return (2304, 1296)
 
     def set_window(self, xmin, ymin, xmax, ymax):
-        pass
+        s_xmax, s_ymax = self.get_resolution()
+        if xmax > s_xmax or ymax > s_ymax:
+            raise ValueError("Window outside maximum resolution")
+        xstart = xmin + 6
+        xend = xmax + 6
+        ystart = ymin + 6
+        yend = ymax + 6
+
+        self._write("x_addr_start", xstart)
+        self._write("x_addr_end", xend)
+        self._write("y_addr_start", ystart)
+        self._write("y_addr_end", yend)
+
+        # Todo: line_length_pck and frame_length_lines (with extra_delay) determine the frame rate depending on the window size
 
     def set_skipping(self, x, y):
         pass
