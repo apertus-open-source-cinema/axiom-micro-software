@@ -3,6 +3,9 @@ from sensor_control.i2c import I2c
 from sensor_control.gpio import GPIO
 from sensor_control.pll import optimal_pll_config
 from sensor_control.util import RelativeOpener
+
+import analog_gain
+
 from yaml import load
 
 
@@ -40,10 +43,17 @@ class Ar0330(Sensor):
         pass
 
     def set_analog_gain(self, multiply):
-        pass
+        actual, coarse, fine = analog_gain.get_close(multiply)
+        val = int(format(coarse, '02b') + format(fine, '04b'), base=2)
+        self._write("analog_gain", val)
+        return actual
 
     def set_digital_gain(self, multiply):
-        pass
+        base = int(multiply)
+        fraction = int((multiply % 1.0) * 128)
+        val = int(format(base, '04b') + format(fraction, '07b'), base=2)
+        self._write("global_gain", val)
+        return multiply
 
     def set_color_gains(self, r, g1, g2, b):
         pass
@@ -120,6 +130,7 @@ class Ar0330(Sensor):
 
         # data format setting
         ## 0xc0c - 12bit raw uncompressed
+        # TODO: move to profile
         self._write("data_format_bits", 0x0c0c)
         # serial output format
         ## select hivcm (1V8)
