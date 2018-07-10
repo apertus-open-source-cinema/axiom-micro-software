@@ -34,8 +34,17 @@ class Ar0330(Sensor):
     def set_color_gains(self, r, g1, g2, b):
         pass
 
+    def _read(self, register_name):
+        register = self.register_map[register_name]
+        addr = register["address"]
+        count = register["width"]
+        addr_high = addr >> 8
+        addr_low = addr & 0xff
+        cmd = "w2@%d %d %d r%d" % (address, addr_high, addr_low, count)
+        return self.i2c.transfer(cmd)
+
     def _write(self, register_name, value):
-        register = cam[register_name]
+        register = self.register_map[register_name]
         addr = register["address"]
         count = register["width"]
         addr_high = addr >> 8
@@ -47,7 +56,6 @@ class Ar0330(Sensor):
             value >>= 8
 
         values = " ".join(reversed(write_value))
-        transfer_cmd = "w%d@%d %d %d %s" % (2 + count, address, addr_high, addr_low, values)
-        return (i2ctransfer(transfer_cmd))
-
+        cmd = "w%d@%d %d %d %s" % (2 + count, address, addr_high, addr_low, values)
+        return self.i2c.transfer(cmd)
 
