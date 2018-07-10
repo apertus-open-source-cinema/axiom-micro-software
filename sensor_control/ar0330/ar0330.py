@@ -11,7 +11,7 @@ class Ar0330(Sensor):
         self.register_map = load(open("registers.yml"))
 
         # reset and initialize sensor
-        _reset()
+        self._reset()
 
     def get_resolution(self):
         pass
