@@ -10,6 +10,9 @@ class Ar0330(Sensor):
         self.gpio = GPIO(0x41200000)
         self.register_map = load(open("registers.yml"))
 
+        # reset and initialize sensor
+        _reset()
+
     def get_resolution(self):
         pass
 
@@ -61,4 +64,27 @@ class Ar0330(Sensor):
         values = " ".join(reversed(write_value))
         cmd = "w%d@%d %d %d %s" % (2 + count, address, addr_high, addr_low, values)
         return self.i2c.transfer(cmd)
+
+    def _reset(self):
+        # toggle reset pin (active low)
+        self.gpio.set(0x7)
+        sleep(.1)
+        self.gpio.set(0x0)
+        sleep(.1)
+        self.gpio.set(0x7)
+        sleep(.1)
+
+        # magic init
+        _write("magic_init_config", 0xa114)
+        _write("magic_init_start", 0x0070)
+        sleep(.1)
+
+        # check chip_version
+        chip_version = _read("chip_version")
+        if chip_version != self.register_map["chip_version"]["value"]:
+            raise ValueError("Chip version mismatch: got {}, config is for {}".format(
+                chip_version, self.register_map["chip_version"]["value"]))
+
+        self._reversed_chiprev = _read("reversed_chiprev")
+        self._version = _read("test_data_red")
 
