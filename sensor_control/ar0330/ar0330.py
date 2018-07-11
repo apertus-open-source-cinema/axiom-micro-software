@@ -4,7 +4,7 @@ from sensor_control.gpio import GPIO
 from sensor_control.pll import optimal_pll_config
 from sensor_control.util import RelativeOpener
 
-import analog_gain
+import sensor_control.ar0330.analog_gain as analog_gain
 
 from yaml import load
 
