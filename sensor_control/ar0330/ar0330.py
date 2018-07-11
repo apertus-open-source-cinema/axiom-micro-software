@@ -24,15 +24,28 @@ class Ar0330(Sensor):
         # reset and initialize sensor
         self._reset()
 
-    def get_resolution(self):
+    @property
+    def resolution(self):
         # this is the maximum in video mode
         # still mode supports a higher ymax
         return (2304, 1296)
 
-    def set_window(self, xmin, ymin, xmax, ymax):
+    @property
+    def window(self):
+        xmin = self._read("x_addr_start")
+        ymin = self._read("y_addr_start")
+        xmax = self._read("x_addr_end")
+        ymax = self._read("y_addr_end")
+        return (xmin, ymin, xmax, ymax)
+
+    @window.setter
+    def set_window(self, value):
+        xmin, ymin, xmax, ymax = value
+
         s_xmax, s_ymax = self.get_resolution()
         if xmax > s_xmax or ymax > s_ymax:
             raise ValueError("Window outside maximum resolution")
+
         xstart = xmin + 6
         xend = xmax + 6
         ystart = ymin + 6
@@ -45,24 +58,56 @@ class Ar0330(Sensor):
 
         # Todo: line_length_pck and frame_length_lines (with extra_delay) determine the frame rate depending on the window size
 
-    def set_skipping(self, x, y):
+    @property
+    def skipping(self):
         pass
 
-    def set_binning(self, x, y):
+    @skipping.setter
+    def set_skipping(self, value):
+        x. y = value
         pass
 
+    @property
+    def binning(self):
+        pass
+
+    @binning.setter
+    def set_binning(self, value):
+        x. y = value
+        pass
+
+    @property
+    def frame_rate(self):
+        pass
+
+    @frame_rate.setter
     def set_frame_rate(self, fps):
         pass
 
+    @property
+    def exposure_time(self):
+        pass
+
+    @exposure_time.setter
     def set_exposure_time(self, ms):
         pass
 
+    @property
+    def analog_gain(self):
+        pass
+
+    @analog_gain.setter
     def set_analog_gain(self, multiply):
         actual, coarse, fine = analog_gain.get_close(multiply)
         val = int(format(coarse, '02b') + format(fine, '04b'), base=2)
         self._write("analog_gain", val)
         return actual
 
+    @property
+    def digital_gain(self):
+        pass
+
+    @digital_gain.setter
     def set_digital_gain(self, multiply):
         base = int(multiply)
         fraction = int((multiply % 1.0) * 128)
@@ -70,7 +115,13 @@ class Ar0330(Sensor):
         self._write("global_gain", val)
         return multiply
 
-    def set_color_gains(self, r, g1, g2, b):
+    @property
+    def color_gains(self):
+        pass
+
+    @color_gains.setter
+    def set_color_gains(self, value):
+        r, g1, g2, b = value
         pass
 
     def _read(self, register_name):
