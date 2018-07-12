@@ -39,7 +39,7 @@ class Ar0330(Sensor):
         return (xmin, ymin, xmax, ymax)
 
     @window.setter
-    def set_window(self, value):
+    def window(self, value):
         xmin, ymin, xmax, ymax = value
 
         s_xmax, s_ymax = self.get_resolution()
@@ -63,7 +63,7 @@ class Ar0330(Sensor):
         pass
 
     @skipping.setter
-    def set_skipping(self, value):
+    def skipping(self, value):
         x. y = value
         pass
 
@@ -72,7 +72,7 @@ class Ar0330(Sensor):
         pass
 
     @binning.setter
-    def set_binning(self, value):
+    def binning(self, value):
         x. y = value
         pass
 
@@ -81,7 +81,7 @@ class Ar0330(Sensor):
         pass
 
     @frame_rate.setter
-    def set_frame_rate(self, fps):
+    def frame_rate(self, fps):
         pass
 
     @property
@@ -89,7 +89,7 @@ class Ar0330(Sensor):
         pass
 
     @exposure_time.setter
-    def set_exposure_time(self, ms):
+    def exposure_time(self, ms):
         pass
 
     @property
@@ -97,7 +97,7 @@ class Ar0330(Sensor):
         pass
 
     @analog_gain.setter
-    def set_analog_gain(self, multiply):
+    def analog_gain(self, multiply):
         actual, coarse, fine = analog_gain.get_close(multiply)
         val = int(format(coarse, '02b') + format(fine, '04b'), base=2)
         self._write("analog_gain", val)
@@ -108,7 +108,7 @@ class Ar0330(Sensor):
         pass
 
     @digital_gain.setter
-    def set_digital_gain(self, multiply):
+    def digital_gain(self, multiply):
         base = int(multiply)
         fraction = int((multiply % 1.0) * 128)
         val = int(format(base, '04b') + format(fraction, '07b'), base=2)
@@ -120,7 +120,7 @@ class Ar0330(Sensor):
         pass
 
     @color_gains.setter
-    def set_color_gains(self, value):
+    def color_gains(self, value):
         r, g1, g2, b = value
         pass
 

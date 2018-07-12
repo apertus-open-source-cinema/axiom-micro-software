@@ -31,7 +31,7 @@ class Sensor(metaclass=ABCMeta):
 
     @window.setter
     @abstractmethod
-    def set_window(self, value):
+    def window(self, value):
         """
         Sets the readout window of the image sensor. If the window lays outside the possible range, a ValueError
         is thrown.
@@ -52,7 +52,7 @@ class Sensor(metaclass=ABCMeta):
 
     @skipping.setter
     @abstractmethod
-    def set_skipping(self, value):
+    def skipping(self, value):
         """
         Set the skipping value of the image sensor. If skiping is set to more than 0 in one direction, only every
         n-th pixel will be read out. If the skipping value is not supported by the sensor, a ValueError
@@ -72,7 +72,7 @@ class Sensor(metaclass=ABCMeta):
 
     @binning.setter
     @abstractmethod
-    def set_binning(self, value):
+    def binning(self, value):
         """
         Set the binning value of the image sensor. If binning is set to more than 0 in one direction,
         n pixels will be averaged together. If the skipping value is not supported by the sensor, a ValueError
@@ -92,7 +92,7 @@ class Sensor(metaclass=ABCMeta):
 
     @frame_rate.setter
     @abstractmethod
-    def set_frame_rate(self, fps):
+    def frame_rate(self, fps):
         """
         Sets the number of frames per second, the sensor captures.
         If the desired value is unsupported, a ValueError is thrown.
@@ -109,7 +109,7 @@ class Sensor(metaclass=ABCMeta):
 
     @exposure_time.setter
     @abstractmethod
-    def set_exposure_time(self, ms):
+    def exposure_time(self, ms):
         """
         Sets the exposure time for each frame. A higher value leads to a greater exposure time and therefore
         to more motion blur and a brighter image. The nearest value will be chosen, if the exact desired value is
@@ -128,7 +128,7 @@ class Sensor(metaclass=ABCMeta):
     
     @analog_gain.setter
     @abstractmethod
-    def set_analog_gain(self, multiply):
+    def analog_gain(self, multiply):
         """
         Sets the analog gain of the sensor. The nearest value will be chosen, if the exact desired value is
         unsupported.
@@ -146,7 +146,7 @@ class Sensor(metaclass=ABCMeta):
 
     @digital_gain.setter
     @abstractmethod
-    def set_digital_gain(self, multiply):
+    def digital_gain(self, multiply):
         """
         Sets the digital gain of the sensor. The nearest value will be chosen, if the exact desired value is
         unsupported. Digital gain has only slight or none advantages compared to brightening the image in post.
@@ -160,12 +160,12 @@ class Sensor(metaclass=ABCMeta):
     def color_gains(self):
         """
         Returns additional individual gains to each color.
-        :returns: (r, g1, g2, b) A tuple of multiplication factors as described in set_color_gains()
+        :returns: (r, g1, g2, b) A tuple of multiplication factors as described in color_gains()
         """
 
     @color_gains.setter
     @abstractmethod
-    def set_color_gains(self, value):
+    def color_gains(self, value):
         """
         Applies an individual, additional gain to each color. The nearest values will be chosen, if the exact desired
         values are unsupported. In most cases, this is implemented using digital gain.
