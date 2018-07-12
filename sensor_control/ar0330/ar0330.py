@@ -147,7 +147,7 @@ class Ar0330(Sensor):
             value >>= 8
 
         values = " ".join(reversed(write_value))
-        cmd = "w%d@%d %d %d %s" % (2 + count, address, addr_high, addr_low, values)
+        cmd = "w%d@%d %d %d %s" % (2 + count, addr, addr_high, addr_low, values)
         return self.i2c.transfer(cmd)
 
     def _reset(self):
