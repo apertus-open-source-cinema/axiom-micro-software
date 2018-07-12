@@ -58,23 +58,97 @@ class Ar0330(Sensor):
 
         # Todo: line_length_pck and frame_length_lines (with extra_delay) determine the frame rate depending on the window size
 
+    def _get_skipbin(self, axis):
+        if axis == "x":
+            colrow = "col"
+        elif axis == "y"
+            colrow = "row"
+        else:
+            raise ValueError("Axis is either x or y")
+
+        inc = self._read(axis + "_odd_inc")
+        skip_factor = (1 + inc) / 2
+        analog_bin = self._read(colrow + "_sf_bin_en")
+        digital_bin = self._read(colrow + "_bin")
+        if analog_bin != 0:
+            binning = 1
+        elif digital_bin != 0:
+            binning = 2
+        else:
+            binning = 0
+
+        return skip_factor, binning
+
+    def _check_skip(self, skip):
+        # See ar0330 datasheet p. 35
+        x_end = self._read("x_addr_end")
+        x_start = self._read("x_addr_start")
+
+        n = (x_end - x_start + 1) / (skip/2)
+        if n % 2 == 0:
+            return True
+        else:
+            return False
+
+    def _set_skipbin(self, axis, skip, bin_):
+        if axis == "x":
+            colrow = "col"
+        elif axis == "y"
+            colrow = "row"
+        else:
+            raise ValueError("Axis is either x or y")
+
+        if self._check_skip(skip) is False:
+            raise ValueError("Skipping/Binning not supportet for this resolution, try changing by one or a few pixels")
+
+        inc = (skip * 2) - 1
+        self._write(axis + "_odd_inc", inc)
+
+        self._write(colrow + "_sf_bin_en", 0)
+        self._write(colrow + "_bin", 0)
+        if bin_ == 1:
+            self._write(colrow + "_sf_bin_en", 1)
+        elif bin_ == 2:
+            self._write(colrow + "_bin", 1)
+
     @property
     def skipping(self):
-        pass
+        x_skip, x_bin = self._get_skipbin("x")
+        y_skip, y_bin = self._get_skipbin("y")
+
+        # ignore skipping value if binning is also enabled
+        if x_bin != 0:
+            x_skip = 0
+        if y_bin != 0:
+            y_skip = 0
+
+        return x_skip, y_skip
 
     @skipping.setter
     def skipping(self, value):
         x. y = value
-        pass
+        self._set_skipbin("x", x, 0)
+        self._set_skipbin("y", y, 0)
 
     @property
     def binning(self):
-        pass
+        x_skip, x_bin = self._get_skipbin("x")
+        y_skip, y_bin = self._get_skipbin("y")
+
+        # zero out skipping value if only skipping and no binning is active
+        if x_bin == 0:
+            x_skip = 0
+        if y_bin != 0:
+            y_skip = 0
+
+        return x_skip, y_skip
 
     @binning.setter
     def binning(self, value):
         x. y = value
-        pass
+        # use 2 for digital binning
+        self._set_skipbin("x", x, 1)
+        self._set_skipbin("y", y, 1)
 
     @property
     def frame_rate(self):
