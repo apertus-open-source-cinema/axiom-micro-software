@@ -61,7 +61,7 @@ class Ar0330(Sensor):
     def _get_skipbin(self, axis):
         if axis == "x":
             colrow = "col"
-        elif axis == "y"
+        elif axis == "y":
             colrow = "row"
         else:
             raise ValueError("Axis is either x or y")
@@ -93,7 +93,7 @@ class Ar0330(Sensor):
     def _set_skipbin(self, axis, skip, bin_):
         if axis == "x":
             colrow = "col"
-        elif axis == "y"
+        elif axis == "y":
             colrow = "row"
         else:
             raise ValueError("Axis is either x or y")
@@ -126,7 +126,7 @@ class Ar0330(Sensor):
 
     @skipping.setter
     def skipping(self, value):
-        x. y = value
+        x, y = value
         self._set_skipbin("x", x, 0)
         self._set_skipbin("y", y, 0)
 
@@ -145,7 +145,7 @@ class Ar0330(Sensor):
 
     @binning.setter
     def binning(self, value):
-        x. y = value
+        x, y = value
         # use 2 for digital binning
         self._set_skipbin("x", x, 1)
         self._set_skipbin("y", y, 1)
@@ -205,7 +205,7 @@ class Ar0330(Sensor):
         count = register["width"]
         addr_high = addr >> 8
         addr_low = addr & 0xff
-        cmd = "w2@%d %d %d r%d" % (address, addr_high, addr_low, count)
+        cmd = "w2@%d %d %d r%d" % (addr, addr_high, addr_low, count)
         return self.i2c.transfer(cmd)
 
     def _write(self, register_name, value):
