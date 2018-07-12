@@ -15,6 +15,11 @@ def prop():
         def foo(self, value):
             self._foo = value
             return self._foo
+        
+        @property
+        def readonly(self):
+            return -1
+
     return Props
 
 @pytest.fixture
@@ -28,3 +33,8 @@ def test_get(prop_gs):
 def test_set(prop_gs):
     assert prop_gs.foo(2) == "set foo to 2"
     assert prop_gs.foo() == "foo is 2"
+
+def test_set_ro(prop_gs):
+    assert prop_gs.readonly() == "readonly is -1"
+    with pytest.raises(AttributeError):
+        prop_gs.readonly(10)
