@@ -98,6 +98,7 @@ class Ar0330(Sensor):
 
     @analog_gain.setter
     def analog_gain(self, multiply):
+        multiply = float(multiply)
         actual, coarse, fine = analog_gain.get_close(multiply)
         val = int(format(coarse, '02b') + format(fine, '04b'), base=2)
         self._write("analog_gain", val)
