@@ -150,9 +150,17 @@ class Ar0330(Sensor):
         self._set_skipbin("x", x, 1)
         self._set_skipbin("y", y, 1)
 
+    def _get_clk_pix(self):
+        clk_pix = ((self.extclk / self._read("pre_pll_clk_div")) * 
+                self._read("pll_multiplier")) / self._read("vt_sys_clk_div") 
+        return clk_pix
+
     @property
     def frame_rate(self):
-        pass
+        clk_pix = self._get_clk_pix()
+        t_frame = (1 / clk_pix) * (self._read("frame_length_lines") * self._read("line_length_pck") * self._read("extra_delay"))
+
+        return 1 / t_frame
 
     @frame_rate.setter
     def frame_rate(self, fps):
@@ -160,7 +168,12 @@ class Ar0330(Sensor):
 
     @property
     def exposure_time(self):
-        pass
+        # technically, integration time since we don't have a shutter
+        clk_pix = self._get_clk_pix()
+        t_row = self._read("line_length_pck") / clk_pix
+        t_coarse = self._read("coarse_integration_time") * t_row
+        t_fine = self._read("fine_integration_time") / clk_pix
+        return t_coarse - t_fine
 
     @exposure_time.setter
     def exposure_time(self, ms):
