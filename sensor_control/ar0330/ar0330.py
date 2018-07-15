@@ -58,14 +58,16 @@ class Ar0330(Sensor):
 
         # Todo: line_length_pck and frame_length_lines (with extra_delay) determine the frame rate depending on the window size
 
-    def _get_skipbin(self, axis):
+    @staticmethod
+    def _colrow(axis):
         if axis == "x":
-            colrow = "col"
+            return "col"
         elif axis == "y":
-            colrow = "row"
-        else:
-            raise ValueError("Axis is either x or y")
+            return "row"
+        raise ValueError("Axis is either x or y")
 
+    def _get_skipbin(self, axis):
+        colrow = self._colrow(axis)
         inc = self._read(axis + "_odd_inc")
         skip_factor = (1 + inc) / 2
         analog_bin = self._read(colrow + "_sf_bin_en")
@@ -91,13 +93,7 @@ class Ar0330(Sensor):
             return False
 
     def _set_skipbin(self, axis, skip, bin_):
-        if axis == "x":
-            colrow = "col"
-        elif axis == "y":
-            colrow = "row"
-        else:
-            raise ValueError("Axis is either x or y")
-
+        colrow = self._colrow(axis)
         if self._check_skip(skip, axis) is False:
             raise ValueError("Skipping/Binning not supported for this resolution, try changing by one or a few pixels")
 
