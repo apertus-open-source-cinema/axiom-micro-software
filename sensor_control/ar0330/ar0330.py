@@ -79,12 +79,12 @@ class Ar0330(Sensor):
 
         return skip_factor, binning
 
-    def _check_skip(self, skip):
+    def _check_skip(self, axis, skip):
         # See ar0330 datasheet p. 35
-        x_end = self._read("x_addr_end")
-        x_start = self._read("x_addr_start")
+        end = self._read(axis + "_addr_end")
+        start = self._read(axis + "_addr_start")
 
-        n = (x_end - x_start + 1) / (skip/2)
+        n = (end - start + 1) / (skip/2)
         if n % 2 == 0:
             return True
         else:
@@ -98,8 +98,8 @@ class Ar0330(Sensor):
         else:
             raise ValueError("Axis is either x or y")
 
-        if self._check_skip(skip) is False:
-            raise ValueError("Skipping/Binning not supportet for this resolution, try changing by one or a few pixels")
+        if self._check_skip(skip, axis) is False:
+            raise ValueError("Skipping/Binning not supported for this resolution, try changing by one or a few pixels")
 
         inc = (skip * 2) - 1
         self._write(axis + "_odd_inc", inc)
