@@ -160,7 +160,13 @@ class Ar0330(Sensor):
 
     @frame_rate.setter
     def frame_rate(self, fps):
-        pass
+        # TODO: Depending on resolution, frame_length_lines and line_length_pck can be set to lower(/est) values
+        clk_pix = self._get_clk_pix()
+        frame_length_lines = self._read("frame_length_lines")
+        line_length_pck = self._read("line_length_pck")
+        extra_delay = clk_pix / fps - frame_length_lines * line_length_pck
+        extra_delay = max(int(extra_delay), 0)
+        self._write("extra_delay", extra_delay)
 
     @property
     def exposure_time(self):
