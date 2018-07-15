@@ -179,7 +179,12 @@ class Ar0330(Sensor):
 
     @exposure_time.setter
     def exposure_time(self, ms):
-        pass
+        t_coarse = ms * 1000  # milliseconds -> microseconds
+        t_row = self._read("line_length_pck") / clk_pix
+        coarse_integration_time = t_coarse / t_row
+        self._write("coarse_integration_time", int(coarse_integration_time))
+        # as per recommendation (p.29), we're leaving fine_integration_time at 0
+
 
     @property
     def analog_gain(self):
