@@ -10,7 +10,7 @@ class ProfileManager:
     def __init__(self, sensor, path=__file__):
         self.sensor = sensor
         self.path = os.path.abspath(path)
-        self._open = RelativeOpener(self.path)
+        self._open = RelativeOpener(self.path).open
 
         self._profile = None
 
