@@ -1,7 +1,7 @@
 import os
 import fire
 from importlib import import_module
-from sensor_control.prop_methods import CliWrapper
+from sensor_control.wrappers import CliWrapper
 
 def main(noreset=False):
     from sensor_control.ar0330.ar0330 import Ar0330 as Sensor
