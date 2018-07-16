@@ -4,7 +4,10 @@ from sensor_control.profile_manager import ProfileManager
 
 class Wrapper(metaclass=ABCMeta):
     """can wrap one or more classes to make their properties avaliable through methods.
-    `_get_set_for_property() is used to generate these methods`"""
+    `_get_set_for_property() is used to generate these methods`
+    
+    Limitations: Two wrapped classes shouldn't have properties with the same name,
+    the later one will shadow the earlier one."""
     def __init__(self, cls):
         self._sensor = cls()
         self._wrap_properties(self._sensor)
