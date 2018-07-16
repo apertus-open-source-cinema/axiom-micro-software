@@ -1,7 +1,7 @@
 import os
 import fire
 from importlib import import_module
-from sensor_control.prop_methods import wrap_properties
+from sensor_control.prop_methods import CliWrapper
 
 def main(noreset=False):
     from sensor_control.ar0330.ar0330 import Ar0330 as Sensor
@@ -11,7 +11,7 @@ def main(noreset=False):
             pass
         Sensor._reset = nop
 
-    s = wrap_properties(Sensor)
+    s = CliWrapper(Sensor)
     fire.Fire(s)
 
 if __name__ == "__main__":
