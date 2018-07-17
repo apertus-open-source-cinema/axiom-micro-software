@@ -1,0 +1,4 @@
+window: [0, 0, 1920, 1080]
+skipping: [0, 0]
+binning: [0, 0]
+frame_rate: 60
