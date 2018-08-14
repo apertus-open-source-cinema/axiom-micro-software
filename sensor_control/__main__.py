@@ -26,7 +26,6 @@ def main():
     # fuse-python eats sys.argv, so we just shove the rest of the args there
     args.fuseargs.insert(0, sys.argv[0])
     sys.argv = args.fuseargs
-    breakpoint()
     expose_properties(sensor)
 
 if __name__ == "__main__":
