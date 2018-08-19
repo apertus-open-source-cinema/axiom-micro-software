@@ -64,22 +64,21 @@ class PropFS(Fuse):
 
     def readdir(self, path, offset):
         props = self.props.keys()
-        for node in  itertools.chain(('.', '..'), props):
+        for node in itertools.chain(('.', '..'), props):
             yield fuse.Direntry(node)
 
     def open(self, path, flags):
         if path[1:] not in self.props.keys():
             return -errno.ENOENT
-        accmode = os.O_RDONLY | os.O_WRONLY | os.O_RDWR
         # we don't need to restrict write access:
         # if (flags & accmode) != os.O_RDONLY:
             # return -errno.EACCES
 
     def read(self, path, size, offset):
         prop = path[1:]
-        val = str(getattr(self.target, prop))
         if prop not in self.props.keys():
             return -errno.ENOENT
+        val = str(getattr(self.target, prop))
         slen = len(val)
         if offset < slen:
             if offset + size > slen:
@@ -91,13 +90,16 @@ class PropFS(Fuse):
 
     def write(self, path, buf, offset):
         prop = path[1:]
-        val = str(getattr(self.target, prop))
         if prop not in self.props.keys():
             return -errno.EOENT
+        val = str(getattr(self.target, prop))
         # TODO: handle offset
         setattr(self.target, prop, buf)
         return len(buf)
 
+    def truncate(self, path, size):
+        breakpoint()
+        return 0
 
 def expose_properties(target):
     usage="""
