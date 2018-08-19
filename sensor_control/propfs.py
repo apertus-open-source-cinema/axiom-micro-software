@@ -98,8 +98,12 @@ class PropFS(Fuse):
         return len(buf)
 
     def truncate(self, path, size):
-        breakpoint()
-        return 0
+        prop = path[1:]
+        if prop not in self.props.keys():
+            return -errno.EOENT
+        val = str(getattr(self.target, prop))
+        trunc = val[:size]
+        setattr(self.target, prop, trunc)
 
 def expose_properties(target):
     usage="""
