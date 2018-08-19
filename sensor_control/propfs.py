@@ -98,12 +98,10 @@ class PropFS(Fuse):
         return len(buf)
 
     def truncate(self, path, size):
-        prop = path[1:]
-        if prop not in self.props.keys():
-            return -errno.EOENT
-        val = str(getattr(self.target, prop))
-        trunc = val[:size]
-        setattr(self.target, prop, trunc)
+        # needs to be implemented so bash file redirection works.
+        # is pretty meaningless for our properties though and gets
+        # over`write()`n anyways  ¯\_(ツ)_/¯
+        return 0
 
 def expose_properties(target):
     usage="""
