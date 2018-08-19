@@ -13,6 +13,7 @@ class RelativeOpener:
 def to(converter):
     def decorator(fun):
         def wrapper(self, value):
+            value = value.strip()
             value = converter(value)
             return fun(self, value)
         return wrapper
@@ -24,7 +25,6 @@ def to_tuple(converter, length):
         if isinstance(value, tuple):
             return value
 
-        value = value.strip()
         if not (value[0] == "(" and value[-1] == ")"):
             raise ValueError("Tupel needs to start and end with parenthesis")
         value = value[1:-1]
