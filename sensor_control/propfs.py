@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+#    Loosely based on python-fuse example hello.py, thanks!
 #    Copyright (C) 2006  Andrew Straw  <strawman@astraw.com>
 #
-#    This program can be distributed under the terms of the GNU LGPL.
-#    See the file COPYING.
+#    Licensed under GNU LGPL.
 #
 
 import os, stat, errno
