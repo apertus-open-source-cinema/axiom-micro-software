@@ -1,4 +1,5 @@
 from sensor_control.sensor import Sensor
+from sensor_control.util import to, to_tuple
 
 class Mock_Sensor(Sensor):
     @staticmethod
@@ -24,6 +25,7 @@ class Mock_Sensor(Sensor):
         return self._window
 
     @window.setter
+    @to_tuple(int, 4)
     def window(self, value):
         xmax, ymax = self.resolution
         if value[0] < 0 or value[1] < 0 or value[2] > xmax or value[3] > ymax:
@@ -35,6 +37,7 @@ class Mock_Sensor(Sensor):
         return self._skipping
 
     @skipping.setter
+    @to_tuple(int, 2)
     def skipping(self, value):
         self._skipping = value
 
@@ -43,6 +46,7 @@ class Mock_Sensor(Sensor):
         return self._binning
 
     @binning.setter
+    @to_tuple(int, 2)
     def binning(self, value):
         self._binning = value
 
@@ -51,6 +55,7 @@ class Mock_Sensor(Sensor):
         return self._frame_rate
 
     @frame_rate.setter
+    @to(int)
     def frame_rate(self, fps):
         self._frame_rate = fps
 
@@ -59,6 +64,7 @@ class Mock_Sensor(Sensor):
         return self._exposure_time
 
     @exposure_time.setter
+    @to(int)
     def exposure_time(self, ms):
         self._exposure_time = ms
 
@@ -67,6 +73,7 @@ class Mock_Sensor(Sensor):
         return self._analog_gain
     
     @analog_gain.setter
+    @to(float)
     def analog_gain(self, multiply):
         self._analog_gain = multiply
 
@@ -75,6 +82,7 @@ class Mock_Sensor(Sensor):
         return self._digital_gain
 
     @digital_gain.setter
+    @to(float)
     def digital_gain(self, multiply):
         self._digital_gain = multiply
 
@@ -84,5 +92,6 @@ class Mock_Sensor(Sensor):
         return self._color_gains
 
     @color_gains.setter
+    @to_tuple(float, 4)
     def color_gains(self, value):
         self._color_gains = value

@@ -2,7 +2,7 @@ from sensor_control.sensor import Sensor
 from sensor_control.i2c import I2c
 from sensor_control.gpio import GPIO
 from sensor_control.pll import optimal_pll_config
-from sensor_control.util import RelativeOpener
+from sensor_control.util import RelativeOpener, to, to_tuple
 
 import sensor_control.ar0330.analog_gain as analog_gain
 
@@ -39,6 +39,7 @@ class Ar0330(Sensor):
         return (xmin, ymin, xmax, ymax)
 
     @window.setter
+    @to_tuple(int, 4)
     def window(self, value):
         xmin, ymin, xmax, ymax = value
 
@@ -121,6 +122,7 @@ class Ar0330(Sensor):
         return x_skip, y_skip
 
     @skipping.setter
+    @to_tuple(int, 2)
     def skipping(self, value):
         x, y = value
         self._set_skipbin("x", x, 0)
@@ -140,6 +142,7 @@ class Ar0330(Sensor):
         return x_skip, y_skip
 
     @binning.setter
+    @to_tuple(int, 2)
     def binning(self, value):
         x, y = value
         # use 2 for digital binning
@@ -159,6 +162,7 @@ class Ar0330(Sensor):
         return 1 / t_frame
 
     @frame_rate.setter
+    @to(int)
     def frame_rate(self, fps):
         # TODO: Depending on resolution, frame_length_lines and line_length_pck can be set to lower(/est) values
         clk_pix = self._get_clk_pix()
@@ -178,6 +182,7 @@ class Ar0330(Sensor):
         return t_coarse - t_fine
 
     @exposure_time.setter
+    @to(float)
     def exposure_time(self, ms):
         t_coarse = ms * 1000  # milliseconds -> microseconds
         t_row = self._read("line_length_pck") / clk_pix
@@ -191,6 +196,7 @@ class Ar0330(Sensor):
         pass
 
     @analog_gain.setter
+    @to(float)
     def analog_gain(self, multiply):
         multiply = float(multiply)
         actual, coarse, fine = analog_gain.get_close(multiply)
@@ -203,6 +209,7 @@ class Ar0330(Sensor):
         pass
 
     @digital_gain.setter
+    @to(float)
     def digital_gain(self, multiply):
         base = int(multiply)
         fraction = int((multiply % 1.0) * 128)
@@ -215,6 +222,7 @@ class Ar0330(Sensor):
         pass
 
     @color_gains.setter
+    @to_tuple(float, 4)
     def color_gains(self, value):
         r, g1, g2, b = value
         pass
