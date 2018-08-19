@@ -13,7 +13,8 @@ class RelativeOpener:
 def to(converter):
     def decorator(fun):
         def wrapper(self, value):
-            value = value.strip()
+            if isinstance(value, str):
+                value = value.strip()
             value = converter(value)
             return fun(self, value)
         return wrapper
