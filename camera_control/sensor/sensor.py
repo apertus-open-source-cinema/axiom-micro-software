@@ -2,12 +2,6 @@ from abc import ABCMeta, abstractmethod
 
 
 class Sensor(metaclass=ABCMeta):
-    @staticmethod
-    def get_sensor():
-        """
-        :returns: an initialized Sensor object for the current camera
-        """
-
     @abstractmethod
     def __init__(self):
         """

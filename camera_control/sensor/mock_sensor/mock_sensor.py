@@ -1,6 +1,8 @@
-from sensor_control.sensor import Sensor
+from camera_control.propfs.type_decorators import typed
+from camera_control.sensor.sensor import Sensor
 
-class Mock_Sensor(Sensor):
+
+class MockSensor(Sensor):
     @staticmethod
     def get_sensor():
         pass
@@ -24,9 +26,10 @@ class Mock_Sensor(Sensor):
         return self._window
 
     @window.setter
+    @typed({"x_start": int, "y_start": int, "x_end": int, "y_end": int})
     def window(self, value):
-        xmax, ymax = self.resolution
-        if value[0] < 0 or value[1] < 0 or value[2] > xmax or value[3] > ymax:
+        x_max, y_max = self.resolution
+        if value["x_start"] < 0 or value["y_start"] < 0 or value["x_end"] > x_max or value["y_end"] > y_max:
             raise ValueError("Unsupported resolution")
         self._window = value
 
@@ -35,6 +38,7 @@ class Mock_Sensor(Sensor):
         return self._skipping
 
     @skipping.setter
+    @typed({"x_skip": int, "y_skip": int})
     def skipping(self, value):
         self._skipping = value
 
@@ -43,6 +47,7 @@ class Mock_Sensor(Sensor):
         return self._binning
 
     @binning.setter
+    @typed({"x_binning": int, "y_binning": int})
     def binning(self, value):
         self._binning = value
 
@@ -51,6 +56,7 @@ class Mock_Sensor(Sensor):
         return self._frame_rate
 
     @frame_rate.setter
+    @typed(float)
     def frame_rate(self, fps):
         self._frame_rate = fps
 
@@ -59,14 +65,16 @@ class Mock_Sensor(Sensor):
         return self._exposure_time
 
     @exposure_time.setter
+    @typed(float)
     def exposure_time(self, ms):
         self._exposure_time = ms
 
     @property
     def analog_gain(self):
         return self._analog_gain
-    
+
     @analog_gain.setter
+    @typed(float)
     def analog_gain(self, multiply):
         self._analog_gain = multiply
 
@@ -75,14 +83,15 @@ class Mock_Sensor(Sensor):
         return self._digital_gain
 
     @digital_gain.setter
+    @typed(float)
     def digital_gain(self, multiply):
         self._digital_gain = multiply
-
 
     @property
     def color_gains(self):
         return self._color_gains
 
     @color_gains.setter
+    @typed({"red": float, "green1": float, "green2": float, "blue": float})
     def color_gains(self, value):
         self._color_gains = value

@@ -1,0 +1,2 @@
+sensor: MockSensor
+mount_point: ".mnt2/"

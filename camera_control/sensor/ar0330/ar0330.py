@@ -1,12 +1,14 @@
-from sensor_control.sensor import Sensor
-from sensor_control.i2c import I2c
-from sensor_control.gpio import GPIO
-from sensor_control.pll import optimal_pll_config
-from sensor_control.util import RelativeOpener
+from time import sleep
 
-import sensor_control.ar0330.analog_gain as analog_gain
-
+from camera_control.pll import optimal_pll_config
 from yaml import load
+
+import camera_control.sensor.ar0330.util as analog_gain
+from camera_control.propfs.type_decorators import typed, noop
+from camera_control.sensor.sensor import Sensor
+from camera_control.util.relative_opener import GPIO
+from camera_control.util.relative_opener import I2c
+from camera_control.util.relative_opener import RelativeOpener
 
 
 class Ar0330(Sensor):
@@ -28,7 +30,7 @@ class Ar0330(Sensor):
     def resolution(self):
         # this is the maximum in video mode
         # still mode supports a higher ymax
-        return (2304, 1296)
+        return 2304, 1296
 
     @property
     def window(self):
@@ -36,13 +38,13 @@ class Ar0330(Sensor):
         ymin = self._read("y_addr_start")
         xmax = self._read("x_addr_end")
         ymax = self._read("y_addr_end")
-        return (xmin, ymin, xmax, ymax)
+        return xmin, ymin, xmax, ymax
 
     @window.setter
     def window(self, value):
         xmin, ymin, xmax, ymax = value
 
-        s_xmax, s_ymax = self.get_resolution()
+        s_xmax, s_ymax = self.resolution
         if xmax > s_xmax or ymax > s_ymax:
             raise ValueError("Window outside maximum resolution")
 
@@ -159,6 +161,7 @@ class Ar0330(Sensor):
         return 1 / t_frame
 
     @frame_rate.setter
+    @typed(noop, int)
     def frame_rate(self, fps):
         # TODO: Depending on resolution, frame_length_lines and line_length_pck can be set to lower(/est) values
         clk_pix = self._get_clk_pix()
@@ -178,6 +181,7 @@ class Ar0330(Sensor):
         return t_coarse - t_fine
 
     @exposure_time.setter
+    @typed(int)
     def exposure_time(self, ms):
         t_coarse = ms * 1000  # milliseconds -> microseconds
         t_row = self._read("line_length_pck") / clk_pix
@@ -191,6 +195,7 @@ class Ar0330(Sensor):
         pass
 
     @analog_gain.setter
+    @typed(float)
     def analog_gain(self, multiply):
         multiply = float(multiply)
         actual, coarse, fine = analog_gain.get_close(multiply)
@@ -203,6 +208,7 @@ class Ar0330(Sensor):
         pass
 
     @digital_gain.setter
+    @typed(float)
     def digital_gain(self, multiply):
         base = int(multiply)
         fraction = int((multiply % 1.0) * 128)
@@ -259,13 +265,13 @@ class Ar0330(Sensor):
         sleep(.1)
 
         # check chip_version
-        chip_version = _read("chip_version")
+        chip_version = self._read("chip_version")
         if chip_version != self.register_map["chip_version"]["value"]:
             raise ValueError("Chip version mismatch: got {}, config is for {}".format(
                 chip_version, self.register_map["chip_version"]["value"]))
 
-        self._reversed_chiprev = _read("reversed_chiprev")
-        self._version = _read("test_data_red")
+        self._reversed_chiprev = self._read("reversed_chiprev")
+        self._version = self._read("test_data_red")
 
         # pll config for 12bit, 4 lane hispi
         vco_hispi_4lanes_12bit_clk = 588000000 # 588 MHz
@@ -295,6 +301,6 @@ class Ar0330(Sensor):
         self._write("data_format_bits", 0x0c0c)
         # serial output format
         ## select hivcm (1V8)
-        self._write("datapath_select", 1 << 9);
+        self._write("datapath_select", 1 << 9)
         ## lol ????
-        self._write("mipi_config_status", 0xc00d);
+        self._write("mipi_config_status", 0xc00d)
