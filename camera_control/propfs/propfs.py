@@ -1,5 +1,6 @@
 import errno
 import logging
+from functools import lru_cache
 from stat import S_IFDIR, S_IFREG
 
 from fuse import FUSE, Operations, LoggingMixIn, FuseOSError, ENOENT
@@ -32,10 +33,12 @@ class PropFS(Operations, LoggingMixIn):
                 last = getattr(last, "get_" + part)()
         return last
 
+    @lru_cache(maxsize=None)
     def _is_file(self, path):
         obj = self._get_object(path)
         return type(obj) in (int, float, bool, str)
 
+    @lru_cache(maxsize=None)
     def _get_required_type(self, path):
         return type(self._get_object(path))
 
@@ -116,4 +119,4 @@ class PropFS(Operations, LoggingMixIn):
 
 def expose_properties(target, mountpoint):
     logging.basicConfig(level=logging.DEBUG)
-    return FUSE(PropFS(target), mountpoint, foreground=True)
+    return FUSE(PropFS(target), mountpoint, foreground=False)
