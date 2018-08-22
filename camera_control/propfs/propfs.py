@@ -55,7 +55,7 @@ class PropFS(Operations, LoggingMixIn):
         return dict(
             st_mode=((S_IFREG if self._is_file(path) else S_IFDIR) | 0o777),
             st_nlink=2,
-            st_size=1024,
+            st_size=len(str(self._get_object(path)) + '\n'),
             st_ctime=0,
             st_mtime=0,
             st_atime=0)

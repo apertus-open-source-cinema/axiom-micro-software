@@ -1,0 +1,2 @@
+driver_mountpoint: ./.mnt/
+fastcgi_socket: fstcgi.sock
