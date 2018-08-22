@@ -1,14 +1,14 @@
 import errno
 import logging
+from stat import S_IFDIR, S_IFREG
 
-from fuse import FUSE, Operations, LoggingMixIn
+from fuse import FUSE, Operations, LoggingMixIn, FuseOSError, ENOENT
 
 
 class PropFS(Operations, LoggingMixIn):
     """
-    Expose a hierarchy of Objects as a filesystem with a given set of rules
+    Expose a the getters and setters of a hierarchy of Objects as a filesystem
     """
-
     def __init__(self, target):
         self.target = target
 
@@ -20,27 +20,61 @@ class PropFS(Operations, LoggingMixIn):
         :param path: the path string
         :returns: the object that is adressed with the path
         """
-        parts = path[1:].split("/")
-        if len(parts) == 1:
+        if path == "/":
             return self.target
 
+        parts = path[1:].split("/")
         last = self.target
         for part in parts:
-            last = getattr(last, part)
+            if type(last) == dict:
+                last = last[part]
+            else:
+                last = getattr(last, "get_" + part)()
         return last
 
-    # the real fuse operations
-    def readdir(self, path, fh):
+    def _is_file(self, path):
         obj = self._get_object(path)
-        children = dir(obj)
-        children = filter(lambda attr: type(getattr(obj, attr)) != staticmethod and attr[0] != "_", children)
+        return type(obj) in (int, float, bool, str)
+
+    def _get_required_type(self, path):
+        return type(self._get_object(path))
+
+    # the real fuse operations
+    def statfs(self, path):
+        return dict(f_bsize=512, f_blocks=4096, f_bavail=2048)
+
+    def open(self, path, flags):
+        return 0
+
+    def getattr(self, path, fh=None):
+        try:
+            obj = self._get_object(path)
+        except (AttributeError, KeyError):
+            raise FuseOSError(ENOENT)
+
+        return dict(
+            st_mode=((S_IFREG if self._is_file(path) else S_IFDIR) | 0o777),
+            st_nlink=2,
+            st_size=1000000,
+            st_ctime=0,
+            st_mtime=0,
+            st_atime=0)
+
+    def readdir(self, path, fh=None):
+        obj = self._get_object(path)
+        if type(obj) == dict:
+            children = obj.keys()
+        else:
+            children = dir(obj)
+            children = filter(lambda attr: attr.startswith("get_"), children)
+            children = [child[len("get_"):] for child in children]
 
         return ['.', '..'] + list(children)
 
-    def read(self, path, size, offset, fh):
+    def read(self, path, size, offset, fh=None):
         try:
             val = str(self._get_object(path)) + '\n'
-        except:
+        except (AttributeError, KeyError):
             return -errno.ENOENT
 
         str_len = len(val)
@@ -50,16 +84,34 @@ class PropFS(Operations, LoggingMixIn):
             buf = val[offset:offset + size]
         else:
             buf = ''
-        return buf
+        return buf.encode("UTF-8")
 
-    def write(self, path, data, offset, fh):
+    def write(self, path, data, offset, fh=None):
         assert offset == 0
 
         try:
-            val = self._get_object(path)
-        except:
-            return -errno.ENOENT
+            val = self._get_required_type(path)(data)
+        except ValueError:
+            return -errno.EINVAL
+
+        path_elements = path.split("/")
+
+        try:
+            start_path = "/".join(path_elements[0:-1])
+            obj = self._get_object(start_path)
+            getattr(obj, "set_" + path_elements[-1])(val)
+        except AttributeError:
+            # we are writing to a dict
+            before = self._get_object("/".join(path_elements[0:-1]))
+            setter = getattr(self._get_object("/".join(path_elements[0:-2])), "set_" + path_elements[-2])
+            before[path_elements[-1]] = val
+            setter(**before)
         return len(data)
+
+    def truncate(self, path, length, fh=None):
+        # truncate is needed to indicate, that the fs is not read only
+        pass
+
 
 
 def expose_properties(target, mountpoint):

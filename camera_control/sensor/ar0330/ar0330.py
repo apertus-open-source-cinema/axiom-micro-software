@@ -1,17 +1,14 @@
 from time import sleep
 
-from camera_control.pll import optimal_pll_config
+from camera_control.sensor.ar0330.util import optimal_pll_config, analog_gain_to_reg, colrow
 from yaml import load
 
-import camera_control.sensor.ar0330.util as analog_gain
-from camera_control.propfs.type_decorators import typed, noop
-from camera_control.sensor.sensor import Sensor
-from camera_control.util.relative_opener import GPIO
-from camera_control.util.relative_opener import I2c
+from camera_control.util.gpio import GPIO
+from camera_control.util.i2c import I2c
 from camera_control.util.relative_opener import RelativeOpener
 
 
-class Ar0330(Sensor):
+class Ar0330():
     def __init__(self):
         # __file__ refers to the absolute path of this file
         # This is needed because the builtin open() is relative to the current working directory
@@ -26,54 +23,42 @@ class Ar0330(Sensor):
         # reset and initialize sensor
         self._reset()
 
-    @property
-    def resolution(self):
+    def get_resolution(self):
         # this is the maximum in video mode
         # still mode supports a higher ymax
         return 2304, 1296
 
-    @property
-    def window(self):
-        xmin = self._read("x_addr_start")
-        ymin = self._read("y_addr_start")
-        xmax = self._read("x_addr_end")
-        ymax = self._read("y_addr_end")
-        return xmin, ymin, xmax, ymax
+    def get_window(self):
+        x_start = self._read("x_addr_start")
+        y_start = self._read("y_addr_start")
+        x_end = self._read("x_addr_end")
+        y_end = self._read("y_addr_end")
+        return dict(x_start=x_start, y_start=y_start, x_end=x_end, y_end=y_end)
 
-    @window.setter
-    def window(self, value):
-        xmin, ymin, xmax, ymax = value
+    def set_window(self, x_start, y_start, x_end, y_end):
 
-        s_xmax, s_ymax = self.resolution
-        if xmax > s_xmax or ymax > s_ymax:
+        s_xmax, s_ymax = self.get_resolution()
+        if x_end > s_xmax or y_end > s_ymax:
             raise ValueError("Window outside maximum resolution")
 
-        xstart = xmin + 6
-        xend = xmax + 6
-        ystart = ymin + 6
-        yend = ymax + 6
+        xstart = x_start + 6
+        xend = x_end + 6
+        ystart = y_start + 6
+        yend = y_end + 6
 
         self._write("x_addr_start", xstart)
         self._write("x_addr_end", xend)
         self._write("y_addr_start", ystart)
         self._write("y_addr_end", yend)
 
-        # Todo: line_length_pck and frame_length_lines (with extra_delay) determine the frame rate depending on the window size
-
-    @staticmethod
-    def _colrow(axis):
-        if axis == "x":
-            return "col"
-        elif axis == "y":
-            return "row"
-        raise ValueError("Axis is either x or y")
+        # TODO: line_length_pck and frame_length_lines (with extra_delay) determine the frame rate depending on the window size
 
     def _get_skipbin(self, axis):
-        colrow = self._colrow(axis)
+        cr = colrow(axis)
         inc = self._read(axis + "_odd_inc")
         skip_factor = (1 + inc) / 2
-        analog_bin = self._read(colrow + "_sf_bin_en")
-        digital_bin = self._read(colrow + "_bin")
+        analog_bin = self._read(cr + "_sf_bin_en")
+        digital_bin = self._read(cr + "_bin")
         if analog_bin != 0:
             binning = 1
         elif digital_bin != 0:
@@ -95,22 +80,21 @@ class Ar0330(Sensor):
             return False
 
     def _set_skipbin(self, axis, skip, bin_):
-        colrow = self._colrow(axis)
+        cr = colrow(axis)
         if self._check_skip(skip, axis) is False:
             raise ValueError("Skipping/Binning not supported for this resolution, try changing by one or a few pixels")
 
         inc = (skip * 2) - 1
         self._write(axis + "_odd_inc", inc)
 
-        self._write(colrow + "_sf_bin_en", 0)
-        self._write(colrow + "_bin", 0)
+        self._write(cr + "_sf_bin_en", 0)
+        self._write(cr + "_bin", 0)
         if bin_ == 1:
-            self._write(colrow + "_sf_bin_en", 1)
+            self._write(cr + "_sf_bin_en", 1)
         elif bin_ == 2:
-            self._write(colrow + "_bin", 1)
+            self._write(cr + "_bin", 1)
 
-    @property
-    def skipping(self):
+    def get_skipping(self):
         x_skip, x_bin = self._get_skipbin("x")
         y_skip, y_bin = self._get_skipbin("y")
 
@@ -122,14 +106,11 @@ class Ar0330(Sensor):
 
         return x_skip, y_skip
 
-    @skipping.setter
-    def skipping(self, value):
-        x, y = value
-        self._set_skipbin("x", x, 0)
-        self._set_skipbin("y", y, 0)
+    def set_skipping(self, x_skip, y_skip):
+        self._set_skipbin("x", x_skip, 0)
+        self._set_skipbin("y", y_skip, 0)
 
-    @property
-    def binning(self):
+    def get_binning(self):
         x_skip, x_bin = self._get_skipbin("x")
         y_skip, y_bin = self._get_skipbin("y")
 
@@ -141,28 +122,22 @@ class Ar0330(Sensor):
 
         return x_skip, y_skip
 
-    @binning.setter
-    def binning(self, value):
-        x, y = value
+    def set_binning(self, x_bin, y_bin):
         # use 2 for digital binning
-        self._set_skipbin("x", x, 1)
-        self._set_skipbin("y", y, 1)
+        self._set_skipbin("x", x_bin, 1)
+        self._set_skipbin("y", y_bin, 1)
 
     def _get_clk_pix(self):
         clk_pix = ((self.extclk / self._read("pre_pll_clk_div")) * 
                 self._read("pll_multiplier")) / self._read("vt_sys_clk_div") 
         return clk_pix
 
-    @property
-    def frame_rate(self):
+    def get_frame_rate(self):
         clk_pix = self._get_clk_pix()
         t_frame = (1 / clk_pix) * (self._read("frame_length_lines") * self._read("line_length_pck") * self._read("extra_delay"))
-
         return 1 / t_frame
 
-    @frame_rate.setter
-    @typed(noop, int)
-    def frame_rate(self, fps):
+    def set_frame_rate(self, fps):
         # TODO: Depending on resolution, frame_length_lines and line_length_pck can be set to lower(/est) values
         clk_pix = self._get_clk_pix()
         frame_length_lines = self._read("frame_length_lines")
@@ -171,58 +146,45 @@ class Ar0330(Sensor):
         extra_delay = max(int(extra_delay), 0)
         self._write("extra_delay", extra_delay)
 
-    @property
-    def exposure_time(self):
+    def get_exposure_time(self):
         # technically, integration time since we don't have a shutter
         clk_pix = self._get_clk_pix()
         t_row = self._read("line_length_pck") / clk_pix
         t_coarse = self._read("coarse_integration_time") * t_row
         t_fine = self._read("fine_integration_time") / clk_pix
-        return t_coarse - t_fine
+        return float(t_coarse - t_fine)
 
-    @exposure_time.setter
-    @typed(int)
-    def exposure_time(self, ms):
+    def set_exposure_time(self, ms):
+        clk_pix = self._get_clk_pix()
         t_coarse = ms * 1000  # milliseconds -> microseconds
         t_row = self._read("line_length_pck") / clk_pix
         coarse_integration_time = t_coarse / t_row
         self._write("coarse_integration_time", int(coarse_integration_time))
         # as per recommendation (p.29), we're leaving fine_integration_time at 0
 
+    def get_analog_gain(self):
+        return float('nan')
 
-    @property
-    def analog_gain(self):
-        pass
-
-    @analog_gain.setter
-    @typed(float)
-    def analog_gain(self, multiply):
+    def set_analog_gain(self, multiply):
         multiply = float(multiply)
-        actual, coarse, fine = analog_gain.get_close(multiply)
+        actual, coarse, fine = analog_gain_to_reg(multiply)
         val = int(format(coarse, '02b') + format(fine, '04b'), base=2)
         self._write("analog_gain", val)
-        return actual
 
-    @property
-    def digital_gain(self):
-        pass
+    def get_digital_gain(self):
+        return float('nan')
 
-    @digital_gain.setter
-    @typed(float)
-    def digital_gain(self, multiply):
+    def set_digital_gain(self, multiply):
         base = int(multiply)
         fraction = int((multiply % 1.0) * 128)
         val = int(format(base, '04b') + format(fraction, '07b'), base=2)
         self._write("global_gain", val)
-        return multiply
 
-    @property
-    def color_gains(self):
-        pass
+    def get_color_gains(self):
+        nan = float('nan')
+        return dict(r=nan, g1=nan, g2=nan, b=nan)
 
-    @color_gains.setter
-    def color_gains(self, value):
-        r, g1, g2, b = value
+    def set_color_gains(self, r, g1, g2, b):
         pass
 
     def _read(self, register_name):

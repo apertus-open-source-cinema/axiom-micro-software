@@ -1,97 +1,65 @@
-from camera_control.propfs.type_decorators import typed
-from camera_control.sensor.sensor import Sensor
-
-
-class MockSensor(Sensor):
-    @staticmethod
-    def get_sensor():
-        pass
-
+class MockSensor():
     def __init__(self):
-        self.window = (0, 0, *self.resolution)
-        self.skipping = (0, 0)
-        self.binning = (0, 0)
-        self.frame_rate = 60
-        self.exposure_time = 10
+        width, height = self.get_resolution().values()
+        self.window = dict(x_start=0, y_start=0, x_end=width, y_end=height)
+        self.skipping = dict(x_skip=0, y_skip=0)
+        self.binning = dict(x_binning=0, y_binning=0)
+        self.frame_rate = 60.0
+        self.exposure_time = 10.0
         self.analog_gain = 1.0
         self.digital_gain = 1.0
-        self.color_gains = (1.0, 1.0, 1.0, 1.0)
+        self.color_gains = dict(r=1.0, g1=1.0, g2=1.0, b=1.0)
 
-    @property
-    def resolution(self):
-        return (1280, 720)
+    def get_resolution(self):
+        return dict(width=1280, height=720)
 
-    @property
-    def window(self):
-        return self._window
+    def get_window(self):
+        return self.window
 
-    @window.setter
-    @typed({"x_start": int, "y_start": int, "x_end": int, "y_end": int})
-    def window(self, value):
-        x_max, y_max = self.resolution
-        if value["x_start"] < 0 or value["y_start"] < 0 or value["x_end"] > x_max or value["y_end"] > y_max:
+    def set_window(self, x_start, y_start, x_end, y_end):
+        x_max, y_max = self.get_resolution().values()
+        if x_start < 0 or y_start < 0 or x_end > x_max or y_end > y_max:
             raise ValueError("Unsupported resolution")
-        self._window = value
+        self.window = dict(x_start=x_start, y_start=y_start, x_end=x_end, y_end=y_end)
 
-    @property
-    def skipping(self):
-        return self._skipping
+    def get_skipping(self):
+        return self.skipping
 
-    @skipping.setter
-    @typed({"x_skip": int, "y_skip": int})
-    def skipping(self, value):
-        self._skipping = value
+    def set_skipping(self, x_skip, y_skip):
+        self.skipping = dict(x_skip=x_skip, y_skip=y_skip)
 
-    @property
-    def binning(self):
-        return self._binning
+    def get_binning(self):
+        return self.binning
 
-    @binning.setter
-    @typed({"x_binning": int, "y_binning": int})
-    def binning(self, value):
-        self._binning = value
+    def set_binning(self, x_binning, y_binning):
+        self.binning = dict(x_binning=x_binning, y_binning=y_binning)
 
-    @property
-    def frame_rate(self):
-        return self._frame_rate
+    def get_frame_rate(self):
+        return self.frame_rate
 
-    @frame_rate.setter
-    @typed(float)
-    def frame_rate(self, fps):
-        self._frame_rate = fps
+    def set_frame_rate(self, fps):
+        self.frame_rate = fps
 
-    @property
-    def exposure_time(self):
-        return self._exposure_time
+    def get_exposure_time(self):
+        return self.exposure_time
 
-    @exposure_time.setter
-    @typed(float)
-    def exposure_time(self, ms):
-        self._exposure_time = ms
+    def set_exposure_time(self, ms):
+        self.exposure_time = ms
 
-    @property
-    def analog_gain(self):
-        return self._analog_gain
+    def get_analog_gain(self):
+        return self.analog_gain
 
-    @analog_gain.setter
-    @typed(float)
-    def analog_gain(self, multiply):
-        self._analog_gain = multiply
+    def set_analog_gain(self, multiply):
+        self.analog_gain = multiply
 
-    @property
-    def digital_gain(self):
-        return self._digital_gain
+    def get_digital_gain(self):
+        return self.digital_gain
 
-    @digital_gain.setter
-    @typed(float)
-    def digital_gain(self, multiply):
-        self._digital_gain = multiply
+    def set_digital_gain(self, multiply):
+        self.digital_gain = multiply
 
-    @property
-    def color_gains(self):
-        return self._color_gains
+    def get_color_gains(self):
+        return self.color_gains
 
-    @color_gains.setter
-    @typed({"red": float, "green1": float, "green2": float, "blue": float})
-    def color_gains(self, value):
-        self._color_gains = value
+    def set_color_gains(self, r, g1, g2, b):
+        self.color_gains = dict(r=r, g1=g1, g2=g2, b=b)

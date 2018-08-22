@@ -1,2 +1,2 @@
 sensor: MockSensor
-mount_point: ".mnt2/"
+mount_point: ".mnt/"

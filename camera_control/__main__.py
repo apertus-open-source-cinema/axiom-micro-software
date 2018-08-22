@@ -12,15 +12,14 @@ conf = load(relative_opener.open("config.yml"))
 
 
 class Camera:
-    def __init__(self, sensor_name):
-        self.sensor = self.get_sensor(sensor_name)
-
-    @staticmethod
-    def get_sensor(sensor):
+    def __init__(self, sensor):
         sensor_mod = import_module("camera_control.sensor." + snakecase(sensor) + "." + snakecase(sensor))
 
         sensor = getattr(sensor_mod, pascalcase(sensor))
-        return sensor
+        self.sensor = sensor()
+
+    def get_sensor(self):
+        return self.sensor
 
 
 if __name__ == "__main__":

@@ -66,3 +66,11 @@ def optimal_pll_config(extclk, vco_target):
             break
 
     return {"pre_pll_clk_div": int(div), "pll_multiplier": int(mul)}
+
+
+def colrow(axis):
+    if axis == "x":
+        return "col"
+    elif axis == "y":
+        return "row"
+    raise ValueError("Axis is either x or y")
