@@ -1,8 +1,8 @@
 from time import sleep
 
-from camera_control.sensor.ar0330.util import optimal_pll_config, analog_gain_to_reg, colrow
 from yaml import load
 
+from camera_control.sensor.ar0330.util import optimal_pll_config, analog_gain_to_reg, colrow
 from camera_control.util.gpio import GPIO
 from camera_control.util.i2c import I2c
 from camera_control.util.relative_opener import RelativeOpener
@@ -16,7 +16,7 @@ class Ar0330():
         self.open = self._ro.open
 
         self.extclk = 24000000
-        self.i2c = I2c("1")
+        self.i2c = I2c("0")
         self.gpio = GPIO(0x41200000)
         self.register_map = load(self.open("registers.yml"))
 
@@ -134,7 +134,7 @@ class Ar0330():
 
     def get_frame_rate(self):
         clk_pix = self._get_clk_pix()
-        t_frame = (1 / clk_pix) * (self._read("frame_length_lines") * self._read("line_length_pck") * self._read("extra_delay"))
+        t_frame = (1 / clk_pix) * (self._read("frame_length_lines") + self._read("line_length_pck") + self._read("extra_delay"))
         return 1 / t_frame
 
     def set_frame_rate(self, fps):
@@ -149,10 +149,12 @@ class Ar0330():
     def get_exposure_time(self):
         # technically, integration time since we don't have a shutter
         clk_pix = self._get_clk_pix()
+        print(clk_pix)
+
         t_row = self._read("line_length_pck") / clk_pix
         t_coarse = self._read("coarse_integration_time") * t_row
         t_fine = self._read("fine_integration_time") / clk_pix
-        return float(t_coarse - t_fine)
+        return float(t_coarse - t_fine) * 1000
 
     def set_exposure_time(self, ms):
         clk_pix = self._get_clk_pix()
@@ -160,6 +162,7 @@ class Ar0330():
         t_row = self._read("line_length_pck") / clk_pix
         coarse_integration_time = t_coarse / t_row
         self._write("coarse_integration_time", int(coarse_integration_time))
+        self._write("fine_integration_time", int(0))
         # as per recommendation (p.29), we're leaving fine_integration_time at 0
 
     def get_analog_gain(self):
@@ -167,8 +170,7 @@ class Ar0330():
 
     def set_analog_gain(self, multiply):
         multiply = float(multiply)
-        actual, coarse, fine = analog_gain_to_reg(multiply)
-        val = int(format(coarse, '02b') + format(fine, '04b'), base=2)
+        val = analog_gain_to_reg(multiply)
         self._write("analog_gain", val)
 
     def get_digital_gain(self):
@@ -193,7 +195,8 @@ class Ar0330():
         count = register["width"]
         addr_high = addr >> 8
         addr_low = addr & 0xff
-        cmd = "w2@%d %d %d r%d" % (addr, addr_high, addr_low, count)
+        # TODO(robin): dont hardcode this (16) address
+        cmd = "w2@%d %d %d r%d" % (16, addr_high, addr_low, count)
         return self.i2c.transfer(cmd)
 
     def _write(self, register_name, value):
@@ -209,7 +212,8 @@ class Ar0330():
             value >>= 8
 
         values = " ".join(reversed(write_value))
-        cmd = "w%d@%d %d %d %s" % (2 + count, addr, addr_high, addr_low, values)
+        # TODO(robin): dont hardcode this (16) address
+        cmd = "w%d@%d %d %d %s" % (2 + count, 16, addr_high, addr_low, values)
         return self.i2c.transfer(cmd)
 
     def _reset(self):
@@ -232,7 +236,6 @@ class Ar0330():
             raise ValueError("Chip version mismatch: got {}, config is for {}".format(
                 chip_version, self.register_map["chip_version"]["value"]))
 
-        self._reversed_chiprev = self._read("reversed_chiprev")
         self._version = self._read("test_data_red")
 
         # pll config for 12bit, 4 lane hispi

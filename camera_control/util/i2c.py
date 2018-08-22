@@ -6,10 +6,10 @@ class I2c:
         self.i2c_bus = i2c_bus
 
     def transfer(self, cmd):
-        output = check_output("i2c_transfer -y " + self.i2c_bus + " " + cmd, shell=True).decode("utf-8")
+        output = check_output("i2ctransfer -y " + self.i2c_bus + " " + cmd, shell=True).decode("utf-8")
 
         if "error" in output:
-            raise IOError("i2c_transfer errored: \n" + output)
+            raise IOError("i2ctransfer errored: \n" + output)
         else:
             if output == '':
                 return 0
