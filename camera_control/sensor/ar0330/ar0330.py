@@ -36,7 +36,6 @@ class Ar0330():
         return dict(x_start=x_start, y_start=y_start, x_end=x_end, y_end=y_end)
 
     def set_window(self, x_start, y_start, x_end, y_end):
-
         s_xmax, s_ymax = self.get_resolution()
         if x_end > s_xmax or y_end > s_ymax:
             raise ValueError("Window outside maximum resolution")
@@ -104,7 +103,7 @@ class Ar0330():
         if y_bin != 0:
             y_skip = 0
 
-        return x_skip, y_skip
+        return dict(x_skip=x_skip, y_skip=y_skip)
 
     def set_skipping(self, x_skip, y_skip):
         self._set_skipbin("x", x_skip, 0)
@@ -114,13 +113,7 @@ class Ar0330():
         x_skip, x_bin = self._get_skipbin("x")
         y_skip, y_bin = self._get_skipbin("y")
 
-        # zero out skipping value if only skipping and no binning is active
-        if x_bin == 0:
-            x_skip = 0
-        if y_bin != 0:
-            y_skip = 0
-
-        return x_skip, y_skip
+        return dict(xbin=x_bin, ybin=y_bin)
 
     def set_binning(self, x_bin, y_bin):
         # use 2 for digital binning
@@ -133,6 +126,7 @@ class Ar0330():
         return clk_pix
 
     def get_frame_rate(self):
+        # TODO: fixme
         clk_pix = self._get_clk_pix()
         t_frame = (1 / clk_pix) * (self._read("frame_length_lines") + self._read("line_length_pck") + self._read("extra_delay"))
         return 1 / t_frame
@@ -149,8 +143,6 @@ class Ar0330():
     def get_exposure_time(self):
         # technically, integration time since we don't have a shutter
         clk_pix = self._get_clk_pix()
-        print(clk_pix)
-
         t_row = self._read("line_length_pck") / clk_pix
         t_coarse = self._read("coarse_integration_time") * t_row
         t_fine = self._read("fine_integration_time") / clk_pix
