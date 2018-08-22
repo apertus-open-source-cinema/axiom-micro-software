@@ -2,7 +2,7 @@ from time import sleep
 
 from yaml import load
 
-from camera_control.sensor.ar0330.util import optimal_pll_config, analog_gain_to_reg, colrow
+from camera_control.sensor.ar0330.util import optimal_pll_config, analog_gain_to_reg, reg_to_analog_gain, colrow
 from camera_control.util.gpio import GPIO
 from camera_control.util.i2c import I2c
 from camera_control.util.relative_opener import RelativeOpener
@@ -26,7 +26,7 @@ class Ar0330():
     def get_resolution(self):
         # this is the maximum in video mode
         # still mode supports a higher ymax
-        return 2304, 1296
+        return dict(width=2304, height=1296)
 
     def get_window(self):
         x_start = self._read("x_addr_start")
@@ -128,7 +128,7 @@ class Ar0330():
     def get_frame_rate(self):
         # TODO: fixme
         clk_pix = self._get_clk_pix()
-        t_frame = (1 / clk_pix) * (self._read("frame_length_lines") + self._read("line_length_pck") + self._read("extra_delay"))
+        t_frame = (1 / clk_pix) * (self._read("frame_length_lines") * self._read("line_length_pck") + self._read("extra_delay"))
         return 1 / t_frame
 
     def set_frame_rate(self, fps):
@@ -158,7 +158,8 @@ class Ar0330():
         # as per recommendation (p.29), we're leaving fine_integration_time at 0
 
     def get_analog_gain(self):
-        return float('nan')
+        reg = self._read("analog_gain")
+        return reg_to_analog_gain(reg)
 
     def set_analog_gain(self, multiply):
         multiply = float(multiply)
@@ -166,7 +167,9 @@ class Ar0330():
         self._write("analog_gain", val)
 
     def get_digital_gain(self):
-        return float('nan')
+        val = self._read("global_gain")
+        bits = "{0:012b}".format(val)
+        return float(int(bits[0:3], base=2) + int(bits[4:11], base=2) / 128)
 
     def set_digital_gain(self, multiply):
         base = int(multiply)
