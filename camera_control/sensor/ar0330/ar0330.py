@@ -94,6 +94,7 @@ class Ar0330():
             self._write(cr + "_bin", 1)
 
     def get_skipping(self):
+        return 0
         x_skip, x_bin = self._get_skipbin("x")
         y_skip, y_bin = self._get_skipbin("y")
 
@@ -110,6 +111,7 @@ class Ar0330():
         self._set_skipbin("y", y_skip, 0)
 
     def get_binning(self):
+        return 0
         x_skip, x_bin = self._get_skipbin("x")
         y_skip, y_bin = self._get_skipbin("y")
 
