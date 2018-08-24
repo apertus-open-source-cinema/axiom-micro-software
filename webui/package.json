@@ -1,0 +1,16 @@
+{
+  "name": "axiom-webui",
+  "version": "1.0.0",
+  "description": "A webui for setting capture parameters of Apertus° AXIOM cameras",
+  "main": "index.js",
+  "license": "AGPL-3.0",
+  "scripts": {
+    "start": "parcel index.html --open"
+  },
+  "dependencies": {
+    "flat": "^4.1.0",
+    "parcel-bundler": "^1.9.7",
+    "react": "^16.0.0",
+    "react-dom": "^16.4.2"
+  }
+}

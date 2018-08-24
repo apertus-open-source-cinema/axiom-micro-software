@@ -4,8 +4,10 @@ from os.path import join
 from os import walk
 from json import dumps
 import errno
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 conf = Config()
 
 
