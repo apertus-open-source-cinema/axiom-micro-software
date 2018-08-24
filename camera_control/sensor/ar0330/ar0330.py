@@ -161,10 +161,9 @@ class Ar0330():
 
     def get_analog_gain(self):
         reg = self._read("analog_gain")
-        return reg_to_analog_gain(reg)
+        return float(reg_to_analog_gain(reg))
 
     def set_analog_gain(self, multiply):
-        multiply = float(multiply)
         val = analog_gain_to_reg(multiply)
         self._write("analog_gain", val)
 
