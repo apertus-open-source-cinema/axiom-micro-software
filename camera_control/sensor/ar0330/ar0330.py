@@ -102,7 +102,7 @@ class Ar0330():
             x_skip = 0
         if y_bin != 0:
             y_skip = 0
-
+            
         return dict(x_skip=x_skip, y_skip=y_skip)
 
     def set_skipping(self, x_skip, y_skip):

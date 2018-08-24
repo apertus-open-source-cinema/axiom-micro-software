@@ -41,9 +41,9 @@ def analog_gain_to_reg(desired):
 
 def reg_to_analog_gain(reg):
     bits = "{0:06b}".format(reg)
-    coarse = int(bits[4: 5], base=2)
-    fine = int(bits[0: 3], base=2)
-    return filter(lambda x: x[1] == coarse and x[2] == fine, analog_gain_settings).__next__()[0]
+    coarse = int(bits[0: 1], base=2)
+    fine = int(bits[2: 5], base=2)
+    return list(filter(lambda x: x[1] == coarse and x[2] == fine, analog_gain_settings))[0][0]
 
 
 def digital_gain_to_reg(desired):

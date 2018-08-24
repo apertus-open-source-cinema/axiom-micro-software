@@ -3,7 +3,7 @@ import './index.css';
 import flatten from 'flat'
 import NumericInputSlider from './NumericInputSlider'
 
-const base_url = "http://localhost:5000/";
+const base_url = "http://axiom-micro:5000/";
 
 export default class App extends Component {
     constructor() {
